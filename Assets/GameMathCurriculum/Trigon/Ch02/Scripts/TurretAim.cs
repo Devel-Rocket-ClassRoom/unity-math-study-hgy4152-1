@@ -62,7 +62,7 @@ public class TurretAim : MonoBehaviour
         // forward 방향이라 회전 시 각도 조절 필요
         Quaternion targetQuaternion = Quaternion.Euler(0f, 90f - targetAngleDegrees, 0f);
 
-        // 회전 최대속도가 존재함 그냥 하면 각이 클 수록 빠르게 돔
+        // .RotateTowards 회전 최대속도가 존재함 그냥 하면 각이 클 수록 빠르게 돔
         transform.rotation = Quaternion.RotateTowards(transform.rotation, targetQuaternion, rotationSpeed * Time.deltaTime);
     }
 

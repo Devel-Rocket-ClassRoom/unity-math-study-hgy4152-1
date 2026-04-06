@@ -61,18 +61,14 @@ public class Assignment_RotationTrail : MonoBehaviour
         
         
         lastTipPos = transform.position;
-        
+        trailPositions.Add(lastTipPos);
 
-        if(trailPositions.Count >= trailLength)
+
+        if (trailPositions.Count >= trailLength)
         {
-            trailPositions.Add(lastTipPos);
             trailPositions.RemoveRange(0, trailPositions.Count - trailLength);
         }
-        else
-        {
-            trailPositions.Add(lastTipPos);
 
-        }
 
 
         UpdateUI();

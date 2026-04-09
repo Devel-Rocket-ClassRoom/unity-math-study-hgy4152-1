@@ -3,12 +3,20 @@ using UnityEngine;
 public class Mouse : MonoBehaviour
 {
     private Camera cam;
-    private Vector3 cubePos;
-    private Transform cube;
-    private void Awake()
+    private Vector3 clickPoint;
+    private Vector3 startPoint;
+    private bool isDrag;
+    private void Start()
     {
         cam = Camera.main;
+        
+        Vector3 cubePos = transform.position;
+
+        cubePos.y = SetHeight(cubePos);
+
+        transform.position = cubePos;
     }
+
     void Update()
     {
         // 클릭 시작 시 큐브 선택 
@@ -20,41 +28,64 @@ public class Mouse : MonoBehaviour
             {
                 if (hit.collider.CompareTag("Cube"))
                 {
-                    cube = hit.transform;
-
-                    // [수정] 바닥과의 오프셋을 정확히 구하기 위해 
-                    // 현재 마우스 위치가 '바닥'의 어디를 가리키는지 다시 체크합니다.
+                    isDrag = true;
+                    startPoint = transform.position;
+                    // 큐브 클릭 포인트 넘어 땅을 찍은 후 그 지점에서 큐브까지의 벡터 오프셋 저장
                     if (Physics.Raycast(ray, out RaycastHit groundHit, Mathf.Infinity, LayerMask.GetMask("Ground")))
                     {
-                        // 큐브의 현재 위치와 마우스가 가리키는 바닥 위치의 차이(XZ만)
-                        cubePos = cube.position - groundHit.point;
-                        cubePos.y = 0; // 높이 차이는 오프셋에서 제거
+  
+                        clickPoint = transform.position - groundHit.point;
+                        clickPoint.y = 0; // 높이 차이는 오프셋에서 제거
                     }
                 }
                     
             }
         }
 
-        if (Input.GetMouseButton(0) && cube != null)
+        if (Input.GetMouseButton(0) && isDrag)
         {
             Ray ray = cam.ScreenPointToRay(Input.mousePosition);
 
             // 바닥 레이어에만 레이를 쏴서 좌표를 얻음
             if (Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity, LayerMask.GetMask("Ground")))
             {
-                Vector3 nextPos = hit.point + cubePos;
+                Vector3 nextPos = hit.point + clickPoint;
 
-                // Terrain 굴곡 따라 해당 좌표의 높이를 올려주는것
-                float terrainHeight = Terrain.activeTerrain.SampleHeight(nextPos);
-                float finalHeight = terrainHeight + Terrain.activeTerrain.transform.position.y;
-
-                nextPos.y = finalHeight + cube.localScale.y/2f; // 원래 높이 유지
-                cube.position = nextPos;
+                nextPos.y = SetHeight(nextPos);
+                transform.position = nextPos;
             }
         }
 
         // 드래그 종료
-        if (Input.GetMouseButtonUp(0)) 
-            cube = null; 
+        if (Input.GetMouseButtonUp(0))
+        {
+            isDrag = false;
+
+            // DropPoint 일 시 떨구고 아닐 시 원래위치로 러프하게 이동
+
+        }
+    }
+
+
+    private float SetHeight(Vector3 pos)
+    {
+        // Terrain 굴곡면 따라서 y 설정
+        float terrainHeight = Terrain.activeTerrain.SampleHeight(pos);
+        float finalHeight = terrainHeight + Terrain.activeTerrain.transform.position.y;
+
+        float y = finalHeight + transform.localScale.y / 2f;
+
+        return y;
+
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        
     }
 }

@@ -38,16 +38,17 @@ public class Assignment_SplineConveyor : MonoBehaviour
     private void Update()
     {
         // TODO
+        // globalT 시작값이 0이라서 그럼. 어쭹지
+        currentSpeedMultiplier = speedCurve.Evaluate(globalT);
 
-
-        float duration = (Time.time / cycleDuration);
+        globalT += currentSpeedMultiplier * (Time.time / cycleDuration);
         
         for(int i = 0 ; i < boxes.Length; i++ )
         {
             float boxOffset = (float)i / boxes.Length;
             
             // 후순위 뒤로 미루기
-            float currentT = duration - boxOffset;
+            float currentT = globalT - boxOffset;
 
             if (currentT < 0)
             {

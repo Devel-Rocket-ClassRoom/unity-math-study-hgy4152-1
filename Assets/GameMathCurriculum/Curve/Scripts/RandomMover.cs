@@ -35,7 +35,7 @@ public class RandomMover : MonoBehaviour
     void Update()
     {
 
-
+        // Time.time 은 인스턴스 간 공유되니까 생성 시점 빼서 맞춰주기
         float t = (Time.time - startTime) / duration;
 
 
@@ -70,8 +70,13 @@ public class RandomMover : MonoBehaviour
         float z = Random.Range(0, range);
 
         
+        // 내가 자르고자 하는 평면의 법선벡터 => (1,1,1) 과 (0,0,0) 을 지나는 정육면체 기준으로 (0.5, 0.5, 0.5)
+        // 평면 방정식 0.5 * (x-1) + 0.5 * (y-1) + 0.5 * (z-1) = 0 
+        // 양 변에 range를 곱하면 거리 보정
         float threshold = 1.5f * range;
         float currentSum = x + y + z;
+
+
 
         if (isLower) // p1을 위한 영역 (합이 1.5L보다 작아야 함)
         {

@@ -1,3 +1,4 @@
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class RandomMover : MonoBehaviour
@@ -21,10 +22,11 @@ public class RandomMover : MonoBehaviour
         p0 = transform.position;
         p3 = range * Vector3.one;
 
-        p1 = new Vector3(Random.value / 2, Random.value / 2, Random.value / 2) * range;
-        p2 = new Vector3(0.5f + Random.value / 2, 0.5f + Random.value / 2, 0.5f + Random.value / 2) * range;
 
-        duration = Random.Range(3, 10);
+        p1 = GetPoint(p3, true);
+        p2 = GetPoint(p3, false);
+
+        duration = Random.Range(5, 10);
 
         startTime = Time.time;
 
@@ -32,6 +34,7 @@ public class RandomMover : MonoBehaviour
 
     void Update()
     {
+
 
         float t = (Time.time - startTime) / duration;
 
@@ -57,5 +60,40 @@ public class RandomMover : MonoBehaviour
         Vector3 e = Vector3.Lerp(b, c, t);
 
         return Vector3.Lerp(d, e, t);
+    }
+
+    private Vector3 GetPoint(Vector3 endPoint, bool isLower)
+    {
+
+        float x = Random.Range(0, range);
+        float y = Random.Range(0, range);
+        float z = Random.Range(0, range);
+
+        
+        float threshold = 1.5f * range;
+        float currentSum = x + y + z;
+
+        if (isLower) // p1을 위한 영역 (합이 1.5L보다 작아야 함)
+        {
+            if (currentSum > threshold)
+            {
+                // 평면 반대쪽으로 대칭 이동
+                x = range - x;
+                y = range - y;
+                z = range - z;
+            }
+        }
+        else // p2를 위한 영역 (합이 1.5L보다 커야 함)
+        {
+            if (currentSum < threshold)
+            {
+                x = range - x;
+                y = range - y;
+                z = range - z;
+            }
+        }
+
+        return new Vector3(x, y, z);
+
     }
 }

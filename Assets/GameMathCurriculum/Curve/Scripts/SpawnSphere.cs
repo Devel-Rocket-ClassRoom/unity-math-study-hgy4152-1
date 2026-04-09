@@ -8,7 +8,7 @@ public class SpawnSphere : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            GameObject go = Instantiate(Sphere, transform);
+            GameObject go = Instantiate(Sphere, transform.position, transform.rotation);
 
             SetColor(go);
             
@@ -42,8 +42,6 @@ public class SpawnSphere : MonoBehaviour
 
         // 4. 그라데이션 객체에 키값들 적용
         gradient.SetKeys(colorKeys, alphaKeys);
-
-        // 5. 트레일 렌더러에 할당
         tr.colorGradient = gradient;
     }
 }

@@ -31,6 +31,7 @@ public class ActiveUi : MonoBehaviour
                      screenPoint.y < 0 || screenPoint.y > Screen.height ||
                      screenPoint.z < 0;
 
+
         if (isOut)
         {
             ui.enabled = true;
@@ -42,8 +43,10 @@ public class ActiveUi : MonoBehaviour
 
             if (screenPoint.z < 0)
             {
-                finalY = margin; 
+                finalY = margin;
+                
             }
+
 
             ui.rectTransform.position = new Vector3(finalX, finalY, 0);
         }

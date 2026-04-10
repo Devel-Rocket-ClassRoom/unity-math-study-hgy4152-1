@@ -4,8 +4,15 @@ public class Mouse : MonoBehaviour
 {
     private Camera cam;
     private Vector3 clickPoint;
-    private Vector3 startPoint;
-    private bool isDrag;
+
+    public Vector3 startPoint;
+    public float returnSpeed = 10f;
+
+
+    // 상태패턴으로 전환해서 해보기
+    public bool isDrag;
+    public bool isDrop;
+    public bool isReturn;
     private void Start()
     {
         cam = Camera.main;
@@ -19,6 +26,16 @@ public class Mouse : MonoBehaviour
 
     void Update()
     {
+        // DropPoint 일 시 떨구고 아닐 시 원래위치로 러프하게 이동
+        if (!isDrop && isReturn)
+        {
+            Vector3 movePos = Vector3.Lerp(transform.position, startPoint, Time.deltaTime * returnSpeed);
+            movePos.y = SetHeight(movePos);
+            transform.position = movePos;
+
+            isReturn = Vector3.Distance(transform.position, startPoint) > 0.1f;
+        }
+
         // 클릭 시작 시 큐브 선택 
         // ray 가 큐브 표면을 쏘기 때문에 누름과 동시에 마우스 위치에서 끌기를 하면 뚝뚝 끊김
         if (Input.GetMouseButtonDown(0)) 
@@ -61,9 +78,17 @@ public class Mouse : MonoBehaviour
         {
             isDrag = false;
 
-            // DropPoint 일 시 떨구고 아닐 시 원래위치로 러프하게 이동
-
+            if(isDrop)
+            {
+                isReturn = false;
+            }
+            else
+            {
+                isReturn = true;
+            }
         }
+
+
     }
 
 
@@ -79,13 +104,5 @@ public class Mouse : MonoBehaviour
 
     }
 
-    private void OnTriggerEnter(Collider other)
-    {
 
-    }
-
-    private void OnTriggerExit(Collider other)
-    {
-        
-    }
 }
